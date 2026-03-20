@@ -4,459 +4,821 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Marvel Rivals — Ult Charge Patch Analysis (Season 6.5 → 7.0)</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; background: #f8f8f6; color: #1a1a18; }
-.page { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
-h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-.subtitle { font-size: 12px; color: #73726c; margin-bottom: 1.5rem; line-height: 1.7; }
-.tab-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
-button.tab { font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 0.5px solid #c8c6be; background: transparent; color: #73726c; cursor: pointer; transition: all 0.15s; }
-button.tab.active { background: #e6f1fb; color: #185fa5; border-color: #185fa5; font-weight: 500; }
-button.tab:hover:not(.active) { background: #f1efe8; }
-.section-label { font-size: 11px; color: #73726c; margin-bottom: 10px; line-height: 1.6; }
-.role-section { margin-bottom: 20px; }
-.role-header { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1.5px solid #d3d1c7; display: flex; align-items: center; gap: 8px; }
-.role-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
-.arch-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
-.arch-col { background: #f1efe8; border-radius: 8px; padding: 8px 10px; }
-.arch-title { font-size: 11px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
-.arch-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.hero-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; border-bottom: 0.5px solid #d3d1c7; font-size: 11px; gap: 4px; }
-.hero-item:last-child { border-bottom: none; }
-.hero-left { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
-.hero-name { color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hero-name.dual { font-style: italic; color: #73726c; }
-.atag { font-size: 9px; font-weight: 500; padding: 1px 4px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
-.hero-stat { font-size: 10px; color: #73726c; flex-shrink: 0; }
-.flag { font-size: 9px; color: #BA7517; margin-left: 3px; }
-.chart-wrap { position: relative; width: 100%; }
-.tooltip { position: absolute; pointer-events: none; background: #ffffff; border: 0.5px solid #c8c6be; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #1a1a18; line-height: 1.7; z-index: 10; opacity: 0; transition: opacity 0.15s; min-width: 210px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.legend-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: #73726c; }
-.leg { display: flex; align-items: center; gap: 4px; }
-.leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.note { font-size: 11px; color: #5f5e5a; margin-top: 14px; line-height: 1.7; padding: 10px 12px; background: #f1efe8; border-radius: 6px; border-left: 3px solid #d3d1c7; }
-.note strong { color: #1a1a18; }
-.role-block { margin-bottom: 28px; }
-.role-block-header { font-size: 13px; font-weight: 500; color: #1a1a18; padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1.5px solid #d3d1c7; display: flex; align-items: center; gap: 8px; }
-.arch-block { margin-bottom: 14px; }
-.arch-block-header { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; padding-left: 6px; border-left: 3px solid; }
-.arch-block-header span { color: #73726c; }
-.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
-.ctrl-label { font-size: 11px; color: #73726c; }
-button.filt { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 0.5px solid #c8c6be; background: transparent; color: #73726c; cursor: pointer; transition: all 0.15s; }
-button.filt:hover { background: #f1efe8; }
-.sep { width: 1px; height: 18px; background: #d3d1c7; margin: 0 4px; }
-button.cmode { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 0.5px solid #c8c6be; background: transparent; color: #73726c; cursor: pointer; transition: all 0.15s; }
-button.cmode.on { background: #f1efe8; font-weight: 500; color: #1a1a18; border-color: #888780; }
-.tbl-wrap { overflow-x: auto; margin-top: 4px; }
-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-thead tr { border-bottom: 1px solid #d3d1c7; }
-th { text-align: left; padding: 5px 8px; font-weight: 500; color: #73726c; cursor: pointer; white-space: nowrap; user-select: none; background: #f8f8f6; }
-th:hover { color: #1a1a18; }
-td { padding: 4px 8px; border-bottom: 0.5px solid #e8e6de; color: #1a1a18; white-space: nowrap; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f1efe8; }
-.pct-cell { font-weight: 500; }
+:root {
+  /* ── Official MR palette from site screenshot ── */
+  --bg:        #151b2e;   /* deep page bg */
+  --bg2:       #1c2336;   /* slightly lighter */
+  --bg3:       #212840;   /* panel row alt */
+  --bg4:       #273050;   /* hover / active row */
+  --panel:     #1e2640;   /* card / panel fill */
+  --panel2:    #252e4c;   /* panel highlight */
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --border3:   rgba(255,255,255,0.20);
+  /* gold: exact amber from header banner */
+  --gold:      #c8922a;
+  --gold2:     #dba535;
+  --gold-glow: rgba(200,146,42,0.22);
+  --gold-dim:  rgba(200,146,42,0.13);
+  /* section header tint — matches their label rows */
+  --row-head:  #2a3454;
+  --row-head2: #222c48;
+  --blue:      #4a7fc1;
+  --text:      #d8e0f0;
+  --text2:     #8fa4c4;
+  --text3:     #4e6488;
+  --white:     #ffffff;
+  --green:     #27ae60;
+  --red:       #c0392b;
+  --teal:      #1abc9c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  /* subtle crosshatch matching MR site texture */
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,0.012) 25%, transparent 25%),
+    linear-gradient(225deg, rgba(255,255,255,0.012) 25%, transparent 25%),
+    linear-gradient(315deg, rgba(255,255,255,0.012) 25%, transparent 25%),
+    linear-gradient(45deg,  rgba(255,255,255,0.012) 25%, transparent 25%);
+  background-size:12px 12px;
+}
+.page{max-width:1020px;margin:0 auto;padding:1.75rem 1.25rem 3rem;}
+
+/* ── HEADER ── */
+.site-header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  margin-bottom:1.25rem;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--gold);
+  position:relative;
+  overflow:hidden;
+}
+/* diagonal slash accent top-right like MR hero cards */
+.site-header::after{
+  content:'';position:absolute;top:0;right:0;
+  width:120px;height:100%;
+  background:linear-gradient(to bottom-left,rgba(200,146,42,0.10) 0%,transparent 60%);
+  pointer-events:none;
+}
+.marvel-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:900;
+  letter-spacing:0.20em;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);
+  color:#0a0e1a;
+  padding:5px 12px;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 100%,7px 100%);
+  flex-shrink:0;
+  box-shadow:0 2px 10px rgba(200,146,42,0.35);
+}
+.rivals-word{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:24px;font-weight:900;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--white);
+  flex-shrink:0;
+  text-shadow:0 0 18px rgba(200,146,42,0.25);
+}
+.header-divider{width:1px;height:26px;background:var(--border2);}
+.header-meta{flex:1;}
+.header-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--text3);
+  line-height:1.4;
+}
+.header-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:27px;font-weight:900;letter-spacing:0.05em;
+  text-transform:uppercase;color:var(--white);
+  line-height:1.1;
+}
+.header-title em{
+  color:var(--gold);font-style:normal;
+  text-shadow:0 0 14px rgba(200,146,42,0.40);
+}
+.header-sub{
+  font-size:11px;color:var(--text3);
+  margin-top:5px;line-height:1.9;
+}
+.header-sub strong{color:var(--text2);font-weight:600;}
+
+/* ── TABS — styled like MR nav items ── */
+.tab-bar{
+  display:flex;gap:0;flex-wrap:wrap;
+  margin-bottom:1.25rem;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-bottom:2px solid var(--border2);
+  overflow:hidden;
+}
+button.tab{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
+  padding:8px 14px;
+  border:none;
+  border-right:1px solid var(--border);
+  background:transparent;
+  color:var(--text3);
+  cursor:pointer;
+  transition:all .15s;
+  white-space:nowrap;
+  position:relative;
+}
+button.tab::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:transparent;transition:background .15s;
+}
+button.tab:hover:not(.active){background:var(--row-head2);color:var(--text2);}
+button.tab:hover:not(.active)::after{background:var(--border3);}
+button.tab.active{background:var(--row-head);color:var(--gold);}
+button.tab.active::after{background:var(--gold);}
+
+/* ── SECTION LABEL — matches MR "ABILITIES" / "TEAM-UP ABILITIES" rows ── */
+.sec-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text2);
+  margin-bottom:10px;
+  padding:6px 12px;
+  background:var(--row-head);
+  border-left:3px solid var(--gold);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--gold);
+}
+
+/* ── ROLE HEADER ── */
+.role-header{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--border2);
+}
+.role-label-pill{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;
+  padding:3px 12px;
+  clip-path:polygon(0 0,calc(100% - 5px) 0,100% 100%,5px 100%);
+  color:#0a0e1a;
+}
+.role-section{margin-bottom:24px;}
+
+/* ── ARCH GRID ── */
+.arch-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:6px;}
+.arch-card{
+  background:var(--panel);
+  border:1px solid var(--border2);
+  position:relative;overflow:hidden;
+}
+.arch-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,var(--gold));}
+.arch-card-header{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 9px 5px;
+  border-bottom:1px solid var(--border);
+  background:var(--row-head2);
+}
+.arch-diamond{width:7px;height:7px;flex-shrink:0;transform:rotate(45deg);}
+.arch-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+}
+.arch-key-badge{
+  margin-left:auto;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:0.06em;
+  padding:1px 6px;border:1px solid;
+  clip-path:polygon(0 0,calc(100% - 3px) 0,100% 100%,3px 100%);
+}
+/* hero rows — like the ability list rows in the screenshot */
+.hero-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 9px;
+  border-bottom:1px solid var(--border);
+  gap:6px;
+  transition:background .1s;
+}
+.hero-row:last-child{border-bottom:none;}
+.hero-row:hover{background:var(--bg4);}
+.hero-name-cell{display:flex;align-items:center;gap:4px;flex:1;min-width:0;}
+.hname{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hname.secondary{color:var(--text3);font-style:italic;}
+.dual-tags{display:flex;gap:2px;flex-shrink:0;}
+.dtag{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:0.05em;
+  padding:1px 5px;border:1px solid;flex-shrink:0;
+}
+.hstat{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--text3);flex-shrink:0;}
+.hvar{font-size:9px;color:var(--gold);margin-left:2px;}
+
+/* ── CONTROLS ── */
+.controls{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:7px 12px;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--gold);
+  margin-bottom:10px;
+}
+.ctrl-sep{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);}
+.vsep{width:1px;height:18px;background:var(--border2);margin:0 4px;}
+button.filt,button.cmode{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+  padding:4px 12px;
+  border:1px solid var(--border2);
+  background:var(--bg2);color:var(--text2);
+  cursor:pointer;transition:all .15s;
+  clip-path:polygon(0 0,calc(100% - 5px) 0,100% 100%,5px 100%);
+}
+button.filt:hover,button.cmode:hover{background:var(--bg4);color:var(--text);border-color:var(--border3);}
+button.cmode.on{
+  background:var(--gold-dim);color:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 0 8px rgba(200,146,42,0.20);
+}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);}
+.leg{display:flex;align-items:center;gap:5px;}
+.leg-sq{width:8px;height:8px;flex-shrink:0;transform:rotate(45deg);}
+
+/* ── ROLE BLOCKS (chart tabs) ── */
+.role-block{margin-bottom:28px;}
+.role-block-head{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:10px;padding:7px 12px;
+  background:var(--row-head2);
+  border:1px solid var(--border2);
+}
+.arch-block{margin-bottom:14px;}
+.arch-block-head{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  padding:5px 9px;
+  background:var(--row-head2);
+  border:1px solid var(--border);
+  border-left:3px solid;
+  margin-bottom:4px;
+}
+.arch-block-head span{color:var(--text2);font-weight:600;}
+
+/* ── TOOLTIP ── */
+.tooltip{
+  position:absolute;pointer-events:none;
+  background:var(--panel2);
+  border:1px solid var(--border3);
+  border-top:2px solid var(--gold);
+  padding:10px 14px;font-size:12px;color:var(--text);line-height:1.9;
+  z-index:20;opacity:0;transition:opacity .12s;min-width:215px;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));
+  box-shadow:0 4px 20px rgba(0,0,0,0.50);
+}
+.tooltip strong{color:var(--gold);}
+.chart-wrap{position:relative;width:100%;}
+
+/* ── TABLE — styled like MR stat rows ── */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border2);}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead tr{
+  background:var(--row-head);
+  border-bottom:2px solid var(--gold);
+}
+th{
+  padding:8px 10px;text-align:left;
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);
+  cursor:pointer;white-space:nowrap;user-select:none;
+  border-right:1px solid var(--border);
+}
+th:last-child{border-right:none;}
+th:hover{color:var(--gold);}
+td{
+  padding:6px 10px;
+  border-bottom:1px solid var(--border);
+  border-right:1px solid var(--border);
+  font-size:11px;color:var(--text);white-space:nowrap;
+}
+td:last-child{border-right:none;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even) td{background:rgba(255,255,255,0.018);}
+tr:hover td{background:var(--bg4);}
+.pct-cell{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.05em;}
+
+/* ── NOTE ── */
+.note{
+  margin-top:18px;padding:10px 14px;
+  font-size:11px;color:var(--text3);line-height:1.9;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--gold2);
+}
+.note strong{color:var(--text2);font-weight:600;}
 </style>
 </head>
 <body>
 <div class="page">
-  <h1>Marvel Rivals — Ult Charge Patch Analysis</h1>
-  <p class="subtitle">
-    Season 6.5 → 7.0 global changes &nbsp;|&nbsp;
-    <strong>Duelists &amp; Vanguards:</strong> damage conversion 90%→70%, passive 12→11/s &nbsp;|&nbsp;
-    <strong>Strategists:</strong> dmg+heal conversion 90%→75%, passive 12→8/s<br>
-    DPM &amp; HPM from rivalsmeta.com top-500 competitive (Season 6.5). Ult costs from official Marvel Rivals ability data. Analysis by sevenfingeredweaver.
-  </p>
-  <div class="tab-row">
-    <button class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
-    <button class="tab" onclick="showTab('all')" id="tab-all">All heroes — % change</button>
-    <button class="tab" onclick="showTab('ults')" id="tab-ults">Ults lost per match</button>
-    <button class="tab" onclick="showTab('slowdown')" id="tab-slowdown">% slowdown by archetype</button>
-    <button class="tab" onclick="showTab('t65')" id="tab-t65">Time to ult — 6.5</button>
-    <button class="tab" onclick="showTab('t70')" id="tab-t70">Time to ult — 7.0</button>
-    <button class="tab" onclick="showTab('delta')" id="tab-delta">Side-by-side</button>
-    <button class="tab" onclick="showTab('table')" id="tab-table">Data table</button>
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="marvel-logo">MARVEL</div>
+    <div class="rivals-word">RIVALS</div>
+    <div class="header-divider"></div>
+    <div class="header-meta">
+      <div class="header-eyebrow">Competitive Analysis · Season 6.5 → 7.0</div>
+      <div class="header-title">Ult Charge <em>Patch Impact</em></div>
+      <div class="header-sub">
+        <strong>Duelists &amp; Vanguards:</strong> damage conversion 90%→70%, passive 12→11/s &nbsp;·&nbsp;
+        <strong>Strategists:</strong> dmg+heal conversion 90%→75%, passive 12→8/s<br>
+        DPM/HPM: rivalsmeta.com top-500 (S6.5) · Ult costs: official Marvel Rivals data · Analysis by <strong>sevenfingeredweaver</strong>
+      </div>
+    </div>
   </div>
 
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
+    <button class="tab" onclick="showTab('all')" id="tab-all">All Heroes % Change</button>
+    <button class="tab" onclick="showTab('ults')" id="tab-ults">Ults Lost / Match</button>
+    <button class="tab" onclick="showTab('slowdown')" id="tab-slowdown">% Slowdown by Archetype</button>
+    <button class="tab" onclick="showTab('t65')" id="tab-t65">Time to Ult — 6.5</button>
+    <button class="tab" onclick="showTab('t70')" id="tab-t70">Time to Ult — 7.0</button>
+    <button class="tab" onclick="showTab('delta')" id="tab-delta">Side-by-Side</button>
+    <button class="tab" onclick="showTab('table')" id="tab-table">Data Table</button>
+  </div>
+
+  <!-- VIEWS -->
   <div id="view-overview">
-    <div class="section-label">Role → archetype. Dual-role heroes appear in both columns (italics = secondary). ⚠ = high DPM variance.</div>
+    <div class="sec-label">Role → Archetype breakdown · Dual-role heroes appear in both columns (italics = secondary) · ⚠ = high DPM variance</div>
     <div id="overview-content"></div>
   </div>
+
   <div id="view-all" style="display:none">
     <div class="controls">
-      <span class="ctrl-label">Role:</span>
+      <span class="ctrl-sep">Role:</span>
       <button class="filt" id="f-all" onclick="setFilter('all')">All</button>
       <button class="filt" id="f-D" onclick="setFilter('D')">Duelist</button>
       <button class="filt" id="f-V" onclick="setFilter('V')">Vanguard</button>
       <button class="filt" id="f-S" onclick="setFilter('S')">Strategist</button>
-      <div class="sep"></div>
-      <span class="ctrl-label">Color:</span>
+      <div class="vsep"></div>
+      <span class="ctrl-sep">Color:</span>
       <button class="cmode on" id="cm-arch" onclick="setColorMode('arch')">Archetype</button>
       <button class="cmode" id="cm-role" onclick="setColorMode('role')">Role</button>
       <button class="cmode" id="cm-grad" onclick="setColorMode('grad')">Severity</button>
     </div>
-    <div class="section-label">Every hero best→worst % slowdown 6.5→7.0. Least impacted at top. Dashed line = average for selected group.</div>
-    <div class="chart-wrap" id="all-chart-wrap" style="height:1180px"><canvas id="c-all"></canvas><div class="tooltip" id="tip-all"></div></div>
-    <div class="legend-row" id="leg-all"></div>
+    <div class="sec-label">Sorted least → most impacted · Dashed line = group average</div>
+    <div class="chart-wrap" id="all-wrap" style="height:1200px"><canvas id="c-all"></canvas><div class="tooltip" id="tip-all"></div></div>
+    <div class="legend" id="leg-all"></div>
   </div>
+
   <div id="view-ults" style="display:none">
-    <div class="section-label">Estimated ults lost per 15-min match in 7.0 vs 6.5. Sorted most→least. Hover for full breakdown.</div>
-    <div class="chart-wrap" style="height:1180px"><canvas id="c-ults"></canvas><div class="tooltip" id="tip-ults"></div></div>
-    <div class="legend-row" id="leg-ults"></div>
+    <div class="sec-label">Estimated ults lost per 15-min match in 7.0 vs 6.5 · Assumes instant ult usage · Relative comparison only</div>
+    <div class="chart-wrap" style="height:1200px"><canvas id="c-ults"></canvas><div class="tooltip" id="tip-ults"></div></div>
+    <div class="legend" id="leg-ults"></div>
   </div>
+
   <div id="view-slowdown" style="display:none">
-    <div class="section-label">% slower to ult in 7.0 vs 6.5 — per role per archetype, sorted worst→best.</div>
+    <div class="sec-label">% slower to ult in 7.0 vs 6.5 — per role per archetype, sorted worst → best</div>
     <div id="chart-s"></div>
   </div>
+
   <div id="view-t65" style="display:none">
-    <div class="section-label">Seconds to ult — Season 6.5 — per role per archetype, sorted slowest→fastest.</div>
+    <div class="sec-label">Seconds to ult — Season 6.5 — per role per archetype, sorted slowest → fastest</div>
     <div id="chart-65"></div>
   </div>
+
   <div id="view-t70" style="display:none">
-    <div class="section-label">Seconds to ult — Season 7.0 — per role per archetype, sorted slowest→fastest.</div>
+    <div class="sec-label">Seconds to ult — Season 7.0 — per role per archetype, sorted slowest → fastest</div>
     <div id="chart-70"></div>
   </div>
+
   <div id="view-delta" style="display:none">
-    <div class="section-label">Season 6.5 (teal) vs 7.0 (red) — per role per archetype, sorted by % slowdown worst→best.</div>
+    <div class="sec-label">Season 6.5 vs 7.0 — per role per archetype, sorted by % slowdown worst → best</div>
     <div id="chart-d"></div>
-    <div class="legend-row">
-      <span class="leg"><span class="leg-dot" style="background:#1D9E75"></span>Season 6.5</span>
-      <span class="leg"><span class="leg-dot" style="background:#D85A30"></span>Season 7.0</span>
+    <div class="legend" style="margin-top:10px;">
+      <span class="leg"><span class="leg-sq" style="background:#1abc9c"></span>Season 6.5</span>
+      <span class="leg"><span class="leg-sq" style="background:#c0392b"></span>Season 7.0</span>
     </div>
   </div>
+
   <div id="view-table" style="display:none">
-    <div class="section-label">Click any column header to sort. ⚠ = high DPM variance — top-500 average may not reflect all playstyles.</div>
-    <div class="tbl-wrap"><table id="data-table">
-      <thead><tr>
-        <th onclick="sortTable('n')">Hero</th>
-        <th onclick="sortTable('r')">Role</th>
-        <th onclick="sortTable('arch')">Arch</th>
-        <th onclick="sortTable('dpm')">DPM</th>
-        <th onclick="sortTable('hpm')">HPM</th>
-        <th onclick="sortTable('ult')">Ult cost</th>
-        <th onclick="sortTable('t65')">6.5 (s)</th>
-        <th onclick="sortTable('t70')">7.0 (s)</th>
-        <th onclick="sortTable('abs')">+Seconds</th>
-        <th onclick="sortTable('pct')">% slower</th>
-        <th onclick="sortTable('ultsLost')">Ults lost/match</th>
-      </tr></thead>
-      <tbody id="tbl-body"></tbody>
-    </table></div>
+    <div class="sec-label">Click any header to sort · ⚠ = high DPM variance</div>
+    <div class="tbl-wrap">
+      <table id="data-table">
+        <thead><tr>
+          <th onclick="sortTable('n')">Hero</th>
+          <th onclick="sortTable('r')">Role</th>
+          <th onclick="sortTable('arch')">Arch</th>
+          <th onclick="sortTable('dpm')">DPM</th>
+          <th onclick="sortTable('hpm')">HPM</th>
+          <th onclick="sortTable('ult')">Ult Cost</th>
+          <th onclick="sortTable('t65')">6.5 (s)</th>
+          <th onclick="sortTable('t70')">7.0 (s)</th>
+          <th onclick="sortTable('abs')">+Seconds</th>
+          <th onclick="sortTable('pct')">% Slower</th>
+          <th onclick="sortTable('ultsLost')">Ults Lost/Match</th>
+        </tr></thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="note">
-    <strong>Formulas —</strong> D/V 6.5: dmg×0.90+12/s → 7.0: dmg×0.70+11/s &nbsp;|&nbsp; S 6.5: (dmg+heal)×0.90+12/s → 7.0: (dmg+heal)×0.75+8/s<br>
-    <strong>Top-500 caveat —</strong> DPM/HPM skews high vs average play; passive energy matters proportionally more at lower skill levels. Relative rankings between heroes remain valid.<br>
-    <strong>⚠ High variance —</strong> Iron Fist and Mister Fantastic have highly variable DPM depending on playstyle — values reflect top-500 averages only.<br>
-    <strong>Ult costs —</strong> Sourced from official Marvel Rivals ability data. Global patch changes only — individual hero reworks are outside scope of this model.
+    <strong>Formulas —</strong>
+    D/V 6.5: dmg×0.90+12/s → 7.0: dmg×0.70+11/s &nbsp;|&nbsp;
+    S 6.5: (dmg+heal)×0.90+12/s → 7.0: (dmg+heal)×0.75+8/s<br>
+    <strong>Top-500 caveat —</strong> DPM/HPM skews high vs average play. Relative rankings valid; absolute numbers optimistic.<br>
+    <strong>⚠ High variance —</strong> Iron Fist and Mister Fantastic DPM is highly playstyle-dependent; top-500 averages only.<br>
+    <strong>Scope —</strong> Global patch changes only. Individual hero reworks (e.g. Hulk) are outside this model.
   </div>
-</div>
+
+</div><!-- .page -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const ARCH={DV:{label:'Dive',color:'#7F77DD'},PK:{label:'Poke',color:'#1D9E75'},BR:{label:'Brawl',color:'#BA7517'},FL:{label:'Flank',color:'#D85A30'},CZ:{label:'Control/Zone',color:'#E24B4A'},DT:{label:'Dive Tank',color:'#5DCAA5'},AT:{label:'Anchor Tank',color:'#534AB7'},ML:{label:'Main Healer',color:'#888780'},OH:{label:'Off-Healer',color:'#3B8BD4'},BS:{label:'Brawl Support',color:'#EF9F27'}};
-const ROLE_COLOR={D:'#1D9E75',V:'#7F77DD',S:'#BA7517'};
+// ── ARCH / ROLE CONFIG ──────────────────────────────────────────
+const ARCH={
+  DV:{label:'Dive',       color:'#7c6fcd'},
+  PK:{label:'Poke',       color:'#2ecc71'},
+  BR:{label:'Brawl',      color:'#e67e22'},
+  FL:{label:'Flank',      color:'#e74c3c'},
+  CZ:{label:'Control/Zone',color:'#3498db'},
+  DT:{label:'Dive Tank',  color:'#1abc9c'},
+  AT:{label:'Anchor Tank',color:'#5dade2'},
+  ML:{label:'Main Healer',color:'#95a5a6'},
+  OH:{label:'Off-Healer', color:'#af7ac5'},
+  BS:{label:'Brawl Supp', color:'#c8922a'},
+};
+const ROLE_COLOR={D:'#2ecc71',V:'#7c6fcd',S:'#c8922a'};
 const ROLE_LABEL={D:'Duelist',V:'Vanguard',S:'Strategist'};
 const ROLES=[
-  {key:'D',label:'Duelist',pill:'#1D9E75',pillBg:'rgba(29,158,117,0.12)',archs:['DV','PK','BR','FL','CZ']},
-  {key:'V',label:'Vanguard',pill:'#7F77DD',pillBg:'rgba(127,119,221,0.12)',archs:['DT','BR','AT','CZ']},
-  {key:'S',label:'Strategist',pill:'#BA7517',pillBg:'rgba(186,117,23,0.12)',archs:['ML','OH','BS']}
+  {key:'D',label:'Duelist',  pill:'#2ecc71',archs:['DV','PK','BR','FL','CZ']},
+  {key:'V',label:'Vanguard', pill:'#7c6fcd',archs:['DT','BR','AT','CZ']},
+  {key:'S',label:'Strategist',pill:'#c8922a',archs:['ML','OH','BS']}
 ];
 const MATCH_MIN=15;
 const HIGH_VAR=new Set(['Iron Fist','Mister Fantastic']);
 
-// Ult costs corrected from official Marvel Rivals ability data
+// ── RAW DATA ────────────────────────────────────────────────────
 const RAW=[
-  // DUELISTS
-  {n:'Spider-Man',      r:'D',arch:'DV',dpm:940,  hpm:0,   ult:2800},
-  {n:'Psylocke',        r:'D',arch:'DV',dpm:1640, hpm:0,   ult:3400,dual:['PK']},
-  {n:'Magik',           r:'D',arch:'DV',dpm:1655, hpm:0,   ult:3400,dual:['FL']},
-  {n:'Daredevil',       r:'D',arch:'DV',dpm:1533, hpm:0,   ult:3400},
-  {n:'Black Panther',   r:'D',arch:'DV',dpm:1082, hpm:0,   ult:3300},
-  {n:'Black Widow',     r:'D',arch:'PK',dpm:1262, hpm:0,   ult:2800},
-  {n:'Hawkeye',         r:'D',arch:'PK',dpm:1507, hpm:0,   ult:3100},
-  {n:'Hela',            r:'D',arch:'PK',dpm:1711, hpm:0,   ult:4000},
-  {n:'Iron Man',        r:'D',arch:'PK',dpm:1712, hpm:0,   ult:3400},
-  {n:'Storm',           r:'D',arch:'PK',dpm:1894, hpm:0,   ult:3400},
-  {n:'Human Torch',     r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3400,dual:['CZ']},
-  {n:'Squirrel Girl',   r:'D',arch:'PK',dpm:1350, hpm:0,   ult:2800},
-  {n:'Moon Knight',     r:'D',arch:'PK',dpm:2391, hpm:0,   ult:2800},
-  {n:'The Punisher',    r:'D',arch:'PK',dpm:2008, hpm:0,   ult:3400},
-  {n:'Namor',           r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3100,dual:['CZ']},
-  {n:'Iron Fist',       r:'D',arch:'BR',dpm:900,  hpm:0,   ult:3400,dual:['DV']},
-  {n:'Blade',           r:'D',arch:'BR',dpm:1493, hpm:0,   ult:2800},
-  {n:'Star-Lord',       r:'D',arch:'BR',dpm:1450, hpm:0,   ult:3100,dual:['FL']},
-  {n:'Wolverine',       r:'D',arch:'FL',dpm:1269, hpm:0,   ult:2800,dual:['BR']},
-  {n:'Scarlet Witch',   r:'D',arch:'CZ',dpm:1560, hpm:0,   ult:3400},
-  {n:'Winter Soldier',  r:'D',arch:'CZ',dpm:1834, hpm:0,   ult:3100,dual:['PK']},
-  {n:'Mister Fantastic',r:'D',arch:'CZ',dpm:900,  hpm:0,   ult:3400},
-  // VANGUARDS
-  {n:'Venom',           r:'V',arch:'DT',dpm:1336, hpm:0,   ult:2500},
-  {n:'Rogue',           r:'V',arch:'DT',dpm:1343, hpm:179, ult:3400,dual:['BR']},
-  {n:'Angela',          r:'V',arch:'DT',dpm:940,  hpm:0,   ult:3100},
-  {n:'Captain America', r:'V',arch:'DT',dpm:1084, hpm:0,   ult:3100,dual:['BR']},
-  {n:'Hulk',            r:'V',arch:'DT',dpm:1169, hpm:0,   ult:3400,dual:['BR']},
-  {n:'Thor',            r:'V',arch:'BR',dpm:1493, hpm:0,   ult:3100,dual:['DT']},
-  {n:'The Thing',       r:'V',arch:'BR',dpm:1609, hpm:0,   ult:2800},
-  {n:'Magneto',         r:'V',arch:'AT',dpm:1500, hpm:0,   ult:3400},
-  {n:'Doctor Strange',  r:'V',arch:'AT',dpm:1495, hpm:0,   ult:3100,dual:['CZ']},
-  {n:'Emma Frost',      r:'V',arch:'AT',dpm:1475, hpm:0,   ult:3400,dual:['BR']},
-  {n:'Groot',           r:'V',arch:'CZ',dpm:1808, hpm:46,  ult:2800,dual:['AT']},
-  {n:'Peni Parker',     r:'V',arch:'CZ',dpm:1270, hpm:371, ult:3400},
-  // STRATEGISTS — corrected costs from official data
-  {n:'Rocket Raccoon',  r:'S',arch:'ML',dpm:157,  hpm:2139,ult:4300,healer:true},
-  {n:'Luna Snow',       r:'S',arch:'ML',dpm:699,  hpm:2352,ult:5000,healer:true},
-  {n:'Invisible Woman', r:'S',arch:'ML',dpm:792,  hpm:2530,ult:4500,healer:true,dual:['CZ']},
-  {n:'Jeff the Shark',  r:'S',arch:'ML',dpm:892,  hpm:2064,ult:4500,healer:true,dual:['CZ']},
-  {n:'Loki',            r:'S',arch:'ML',dpm:798,  hpm:2380,ult:4300,healer:true,dual:['CZ']},
-  {n:'Cloak & Dagger',  r:'S',arch:'ML',dpm:639,  hpm:2804,ult:4500,healer:true,dual:['BS']},
-  {n:'Mantis',          r:'S',arch:'BS',dpm:858,  hpm:1478,ult:4300,healer:true,dual:['OH']},
-  {n:'Adam Warlock',    r:'S',arch:'OH',dpm:1017, hpm:1353,ult:4500,healer:true,dual:['BS']},
-  {n:'Ultron',          r:'S',arch:'OH',dpm:1142, hpm:1651,ult:4000,healer:true},
+  {n:'Spider-Man',       r:'D',arch:'DV',dpm:940,  hpm:0,   ult:2800},
+  {n:'Psylocke',         r:'D',arch:'DV',dpm:1640, hpm:0,   ult:3400,dual:['PK']},
+  {n:'Magik',            r:'D',arch:'DV',dpm:1655, hpm:0,   ult:3400,dual:['FL']},
+  {n:'Daredevil',        r:'D',arch:'DV',dpm:1533, hpm:0,   ult:3400},
+  {n:'Black Panther',    r:'D',arch:'DV',dpm:1082, hpm:0,   ult:3300},
+  {n:'Black Widow',      r:'D',arch:'PK',dpm:1262, hpm:0,   ult:2800},
+  {n:'Hawkeye',          r:'D',arch:'PK',dpm:1507, hpm:0,   ult:3100},
+  {n:'Hela',             r:'D',arch:'PK',dpm:1711, hpm:0,   ult:4000},
+  {n:'Iron Man',         r:'D',arch:'PK',dpm:1712, hpm:0,   ult:3400},
+  {n:'Storm',            r:'D',arch:'PK',dpm:1894, hpm:0,   ult:3400},
+  {n:'Human Torch',      r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3400,dual:['CZ']},
+  {n:'Squirrel Girl',    r:'D',arch:'PK',dpm:1350, hpm:0,   ult:2800},
+  {n:'Moon Knight',      r:'D',arch:'PK',dpm:2391, hpm:0,   ult:2800},
+  {n:'The Punisher',     r:'D',arch:'PK',dpm:2008, hpm:0,   ult:3400},
+  {n:'Namor',            r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3100,dual:['CZ']},
+  {n:'Iron Fist',        r:'D',arch:'BR',dpm:900,  hpm:0,   ult:3400,dual:['DV']},
+  {n:'Blade',            r:'D',arch:'BR',dpm:1493, hpm:0,   ult:2800},
+  {n:'Star-Lord',        r:'D',arch:'BR',dpm:1450, hpm:0,   ult:3100,dual:['FL']},
+  {n:'Wolverine',        r:'D',arch:'FL',dpm:1269, hpm:0,   ult:2800,dual:['BR']},
+  {n:'Scarlet Witch',    r:'D',arch:'CZ',dpm:1560, hpm:0,   ult:3400},
+  {n:'Winter Soldier',   r:'D',arch:'CZ',dpm:1834, hpm:0,   ult:3100,dual:['PK']},
+  {n:'Mister Fantastic', r:'D',arch:'CZ',dpm:900,  hpm:0,   ult:3400},
+  {n:'Venom',            r:'V',arch:'DT',dpm:1336, hpm:0,   ult:2500},
+  {n:'Rogue',            r:'V',arch:'DT',dpm:1343, hpm:179, ult:3400,dual:['BR']},
+  {n:'Angela',           r:'V',arch:'DT',dpm:940,  hpm:0,   ult:3100},
+  {n:'Captain America',  r:'V',arch:'DT',dpm:1084, hpm:0,   ult:3100,dual:['BR']},
+  {n:'Hulk',             r:'V',arch:'DT',dpm:1169, hpm:0,   ult:3400,dual:['BR']},
+  {n:'Thor',             r:'V',arch:'BR',dpm:1493, hpm:0,   ult:3100,dual:['DT']},
+  {n:'The Thing',        r:'V',arch:'BR',dpm:1609, hpm:0,   ult:2800},
+  {n:'Magneto',          r:'V',arch:'AT',dpm:1500, hpm:0,   ult:3400},
+  {n:'Doctor Strange',   r:'V',arch:'AT',dpm:1495, hpm:0,   ult:3100,dual:['CZ']},
+  {n:'Emma Frost',       r:'V',arch:'AT',dpm:1475, hpm:0,   ult:3400,dual:['BR']},
+  {n:'Groot',            r:'V',arch:'CZ',dpm:1808, hpm:46,  ult:2800,dual:['AT']},
+  {n:'Peni Parker',      r:'V',arch:'CZ',dpm:1270, hpm:371, ult:3400},
+  {n:'Rocket Raccoon',   r:'S',arch:'ML',dpm:157,  hpm:2139,ult:4300,healer:true},
+  {n:'Luna Snow',        r:'S',arch:'ML',dpm:699,  hpm:2352,ult:5000,healer:true},
+  {n:'Invisible Woman',  r:'S',arch:'ML',dpm:792,  hpm:2530,ult:4500,healer:true,dual:['CZ']},
+  {n:'Jeff the Shark',   r:'S',arch:'ML',dpm:892,  hpm:2064,ult:4500,healer:true,dual:['CZ']},
+  {n:'Loki',             r:'S',arch:'ML',dpm:798,  hpm:2380,ult:4300,healer:true,dual:['CZ']},
+  {n:'Cloak & Dagger',   r:'S',arch:'ML',dpm:639,  hpm:2804,ult:4500,healer:true,dual:['BS']},
+  {n:'Mantis',           r:'S',arch:'BS',dpm:858,  hpm:1478,ult:4300,healer:true,dual:['OH']},
+  {n:'Adam Warlock',     r:'S',arch:'OH',dpm:1017, hpm:1353,ult:4500,healer:true,dual:['BS']},
+  {n:'Ultron',           r:'S',arch:'OH',dpm:1142, hpm:1651,ult:4000,healer:true},
 ];
 
+// ── COMPUTE ─────────────────────────────────────────────────────
 const DATA=RAW.map(h=>{
-  const isS=h.healer||h.r==='S';
-  const src=(h.dpm+(h.hpm||0))/60,dmg=h.dpm/60;
+  const isS=!!(h.healer||h.r==='S');
+  const src=(h.dpm+(h.hpm||0))/60, dmg=h.dpm/60;
   const e65=isS?src*0.90+12:dmg*0.90+12;
-  const e70=isS?src*0.75+8:dmg*0.70+11;
-  const t65=h.ult/e65,t70=h.ult/e70,abs=t70-t65,pct=(abs/t65)*100;
+  const e70=isS?src*0.75+8 :dmg*0.70+11;
+  const t65=h.ult/e65, t70=h.ult/e70;
+  const abs=t70-t65, pct=(abs/t65)*100;
   const ultsLost=(MATCH_MIN*60/t65)-(MATCH_MIN*60/t70);
   return{...h,e65,e70,t65,t70,abs,pct,ultsLost};
 });
 
-function tagHTML(k){const a=ARCH[k];return`<span class="atag" style="background:${a.color}22;color:${a.color}">${k}</span>`;}
-function pctGrad(p){const t=Math.min(1,Math.max(0,(p-14)/28));return`rgb(${Math.round(46+t*180)},${Math.round(158-t*83)},${Math.round(117-t*69)})`;}
+// ── HELPERS ─────────────────────────────────────────────────────
+const TC='#8fa4c0', GC='rgba(80,120,180,0.12)';
+
+function tagEl(k){
+  const a=ARCH[k];
+  const s=document.createElement('span');
+  s.className='dtag';
+  s.textContent=k;
+  s.style.cssText=`background:${a.color}22;color:${a.color};border-color:${a.color}55`;
+  return s;
+}
+function pctGrad(p){
+  const t=Math.min(1,Math.max(0,(p-14)/28));
+  return`rgb(${Math.round(46+t*180)},${Math.round(158-t*83)},${Math.round(117-t*69)})`;
+}
 function makeTip(d){
-  const duals=d.dual?` + ${d.dual.join('/')}` :'';
-  const hl=d.healer?`DPM: ${d.dpm} · HPM: ${d.hpm}<br>Combined: ${d.dpm+d.hpm}/min`:`DPM: ${d.dpm}`;
-  const vf=HIGH_VAR.has(d.n)?'<br><span style="color:#BA7517">⚠ high DPM variance</span>':'';
-  return`<strong>${d.n}</strong> <span style="font-size:10px;color:#73726c">${ARCH[d.arch].label}${duals} · ${ROLE_LABEL[d.r]}</span><br>${hl}<br>Ult: ${d.ult}<br>6.5 → ${d.t65.toFixed(1)}s · 7.0 → ${d.t70.toFixed(1)}s<br>+${d.abs.toFixed(1)}s · <strong>+${d.pct.toFixed(1)}%</strong><br>Ults lost/match: <strong>${d.ultsLost.toFixed(2)}</strong>${vf}`;
+  const isS=!!(d.healer||d.r==='S');
+  const statLine=isS?`DPM: ${d.dpm} · HPM: ${d.hpm}<br>Combined: ${d.dpm+d.hpm}/min`:`DPM: ${d.dpm}`;
+  const vf=HIGH_VAR.has(d.n)?`<br><span style="color:var(--gold)">⚠ high DPM variance</span>`:'';
+  return`<strong>${d.n}</strong> <span style="font-size:10px;color:var(--text3)">${ARCH[d.arch].label} · ${ROLE_LABEL[d.r]}</span><br>${statLine}<br>Ult cost: ${d.ult}<br>6.5 → ${d.t65.toFixed(1)}s &nbsp; 7.0 → ${d.t70.toFixed(1)}s<br>+${d.abs.toFixed(1)}s · <strong>+${d.pct.toFixed(1)}%</strong><br>Ults lost/match: <strong>${d.ultsLost.toFixed(2)}</strong>${vf}`;
 }
 
+// ── OVERVIEW ────────────────────────────────────────────────────
 function buildOverview(){
-  const c=document.getElementById('overview-content');
+  const wrap=document.getElementById('overview-content');
   ROLES.forEach(role=>{
     const rh=DATA.filter(h=>h.r===role.key);
-    const ap=new Set();rh.forEach(h=>{ap.add(h.arch);if(h.dual)h.dual.forEach(d=>ap.add(d));});
+    const usedArchs=new Set();
+    rh.forEach(h=>{usedArchs.add(h.arch);if(h.dual)h.dual.forEach(d=>usedArchs.add(d));});
+
     const sec=document.createElement('div');sec.className='role-section';
-    sec.innerHTML=`<div class="role-header"><span class="role-pill" style="color:${role.pill};background:${role.pillBg}">${role.label}</span></div>`;
-    const ar=document.createElement('div');ar.className='arch-row';
+    const rhead=document.createElement('div');rhead.className='role-header';
+    const pill=document.createElement('span');pill.className='role-label-pill';
+    pill.textContent=role.label;
+    pill.style.background=role.pill;
+    rhead.appendChild(pill);sec.appendChild(rhead);
+
+    const row=document.createElement('div');row.className='arch-row';
     Object.keys(ARCH).forEach(ak=>{
-      if(!ap.has(ak))return;
-      const pri=rh.filter(h=>h.arch===ak),sec2=rh.filter(h=>h.dual&&h.dual.includes(ak));
+      if(!usedArchs.has(ak))return;
+      const pri=rh.filter(h=>h.arch===ak);
+      const sec2=rh.filter(h=>h.dual&&h.dual.includes(ak)&&h.arch!==ak);
       if(!pri.length&&!sec2.length)return;
-      const col=document.createElement('div');col.className='arch-col';
-      col.innerHTML=`<div class="arch-title"><span class="arch-dot" style="background:${ARCH[ak].color}"></span>${ARCH[ak].label}</div>`;
-      [...pri,...sec2].sort((a,b)=>a.dpm-b.dpm).forEach(h=>{
-        const isDual=!pri.includes(h);
-        const tags=isDual?tagHTML(h.arch):(h.dual?h.dual.map(d=>tagHTML(d)).join(''):'');
-        const item=document.createElement('div');item.className='hero-item';
-        const stat=h.healer?`${h.dpm}d/${h.hpm}h`:h.dpm;
-        const vf=HIGH_VAR.has(h.n)?'<span class="flag">⚠</span>':'';
-        item.innerHTML=`<div class="hero-left"><span class="hero-name${isDual?' dual':''}">${h.n}${vf}</span>${tags}</div><span class="hero-stat">${stat}</span>`;
-        col.appendChild(item);
+      const ac=ARCH[ak].color;
+      const card=document.createElement('div');card.className='arch-card';card.style.setProperty('--ac',ac);
+
+      const chead=document.createElement('div');chead.className='arch-card-header';
+      const diam=document.createElement('span');diam.className='arch-diamond';diam.style.background=ac;
+      const cname=document.createElement('span');cname.className='arch-name';cname.textContent=ARCH[ak].label;cname.style.color=ac;
+      const badge=document.createElement('span');badge.className='arch-key-badge';badge.textContent=ak;
+      badge.style.cssText=`color:${ac};border-color:${ac}55;background:${ac}15`;
+      chead.append(diam,cname,badge);card.appendChild(chead);
+
+      [...pri,...sec2].sort((a,b)=>a.t65-b.t65).forEach(h=>{
+        const isDual=sec2.includes(h);
+        const hrow=document.createElement('div');hrow.className='hero-row';
+        const ncell=document.createElement('div');ncell.className='hero-name-cell';
+        const nm=document.createElement('span');nm.className='hname'+(isDual?' secondary':'');
+        nm.textContent=h.n;
+        if(HIGH_VAR.has(h.n)){const f=document.createElement('span');f.className='hvar';f.textContent='⚠';nm.appendChild(f);}
+        ncell.appendChild(nm);
+        if(!isDual&&h.dual){const dt=document.createElement('div');dt.className='dual-tags';h.dual.forEach(d=>dt.appendChild(tagEl(d)));ncell.appendChild(dt);}
+        if(isDual){const dt=document.createElement('div');dt.className='dual-tags';dt.appendChild(tagEl(h.arch));ncell.appendChild(dt);}
+        const stat=document.createElement('span');stat.className='hstat';
+        const isS=!!(h.healer||h.r==='S');
+        stat.textContent=isS?`${h.dpm}d/${h.hpm}h`:`${h.dpm}`;
+        hrow.append(ncell,stat);card.appendChild(hrow);
       });
-      ar.appendChild(col);
+      row.appendChild(card);
     });
-    sec.appendChild(ar);c.appendChild(sec);
+    sec.appendChild(row);wrap.appendChild(sec);
   });
 }
 
-let allChart=null,allFilter='all',allColorMode='arch';
-function allColors(s){
-  if(allColorMode==='arch')return s.map(d=>ARCH[d.arch].color+'cc');
-  if(allColorMode==='role')return s.map(d=>ROLE_COLOR[d.r]+'cc');
-  return s.map(d=>pctGrad(d.pct));
+// ── ALL CHART ───────────────────────────────────────────────────
+let allChart=null,allFilter='all',colorMode='arch';
+
+function allColors(sorted){
+  if(colorMode==='arch')return sorted.map(d=>ARCH[d.arch].color+'cc');
+  if(colorMode==='role')return sorted.map(d=>ROLE_COLOR[d.r]+'cc');
+  return sorted.map(d=>pctGrad(d.pct));
 }
 function buildAllChart(){
   const fil=allFilter==='all'?DATA:DATA.filter(d=>d.r===allFilter);
   const sorted=[...fil].sort((a,b)=>a.pct-b.pct);
   const avg=fil.reduce((s,d)=>s+d.pct,0)/fil.length;
   const ht=Math.max(sorted.length*26+60,100);
-  document.getElementById('all-chart-wrap').style.height=ht+'px';
+  document.getElementById('all-wrap').style.height=ht+'px';
   if(allChart){allChart.destroy();allChart=null;}
   allChart=new Chart(document.getElementById('c-all').getContext('2d'),{
     type:'bar',
-    data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(d=>parseFloat(d.pct.toFixed(1))),backgroundColor:allColors(sorted),borderRadius:3,borderSkipped:false}]},
+    data:{
+      labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),
+      datasets:[{data:sorted.map(d=>+d.pct.toFixed(1)),backgroundColor:allColors(sorted),borderRadius:2,borderSkipped:false}]
+    },
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      plugins:{legend:{display:false},tooltip:{enabled:false},
+        annotation:{annotations:{avg:{type:'line',scaleID:'x',value:avg,borderColor:'rgba(200,146,42,0.8)',borderWidth:1.5,borderDash:[4,4]}}}
+      },
       scales:{
-        x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'% slower to ult in 7.0 vs 6.5',color:'#5f5e5a',font:{size:11}}},
-        y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}
+        x:{grid:{color:GC},ticks:{color:TC,font:{size:10,family:'Barlow Condensed'}},title:{display:true,text:'% SLOWER TO ULT IN 7.0 VS 6.5',color:TC,font:{size:10,family:'Barlow Condensed',weight:'700'}}},
+        y:{grid:{display:false},ticks:{color:TC,font:{size:10,family:'Barlow'}}}
       },
       onHover:(evt,els,chart)=>{
         const tip=document.getElementById('tip-all');
         if(!els.length){tip.style.opacity=0;return;}
         tip.innerHTML=makeTip(sorted[els[0].index]);
-        const wr=chart.canvas.parentElement.getBoundingClientRect();
-        tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
-        tip.style.top=(evt.native.clientY-wr.top-10)+'px';
-        tip.style.opacity=1;
+        pos(tip,evt,chart);tip.style.opacity=1;
       }
     }
   });
   const leg=document.getElementById('leg-all');leg.innerHTML='';
-  if(allColorMode==='arch')Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
-  else if(allColorMode==='role')Object.entries(ROLE_LABEL).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${ROLE_COLOR[k]}"></span>${v}</span>`;});
-  else leg.innerHTML='<span class="leg"><span class="leg-dot" style="background:#1D9E75"></span>least impacted</span><span class="leg"><span class="leg-dot" style="background:#E24B4A"></span>most impacted</span>';
-  const rl=allFilter==='all'?'Overall':ROLE_LABEL[allFilter];
-  leg.innerHTML+=`<span class="leg" style="margin-left:8px">— ${rl} avg: ${avg.toFixed(1)}%</span>`;
+  if(colorMode==='arch')Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-sq" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
+  else if(colorMode==='role')Object.entries(ROLE_LABEL).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-sq" style="background:${ROLE_COLOR[k]}"></span>${v}</span>`;});
+  else leg.innerHTML='<span class="leg"><span class="leg-sq" style="background:#1abc9c"></span>Least impacted</span><span class="leg"><span class="leg-sq" style="background:#c0392b"></span>Most impacted</span>';
+  const rl=allFilter==='all'?'Overall avg':ROLE_LABEL[allFilter]+' avg';
+  leg.innerHTML+=`<span class="leg" style="margin-left:8px;color:var(--gold)">— ${rl}: ${avg.toFixed(1)}%</span>`;
 }
-function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}
+
+function hexRgb(h){return`${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)}`;}
 function setFilter(f){
   allFilter=f;
   ['all','D','V','S'].forEach(x=>{
     const b=document.getElementById('f-'+x);if(!b)return;
-    const isOn=x===f;
-    b.style.borderColor=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#c8c6be';
-    b.style.color=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#73726c';
-    b.style.background=isOn?(x==='all'?'#e6f1fb':'rgba('+hexToRgb(x==='all'?'#185fa5':ROLE_COLOR[x])+',0.08)'):'transparent';
+    const active=x===f;
+    const c=x==='all'?'#c8922a':ROLE_COLOR[x];
+    b.style.borderColor=active?c:'rgba(80,120,180,0.18)';
+    b.style.color=active?c:'#8fa4c0';
+    b.style.background=active?`rgba(${hexRgb(c)},0.12)`:'transparent';
   });
   if(made.all)buildAllChart();
 }
-function setColorMode(m){allColorMode=m;['arch','role','grad'].forEach(x=>document.getElementById('cm-'+x).classList.toggle('on',x===m));if(made.all)buildAllChart();}
+function setColorMode(m){
+  colorMode=m;
+  ['arch','role','grad'].forEach(x=>document.getElementById('cm-'+x).classList.toggle('on',x===m));
+  if(made.all)buildAllChart();
+}
 
+// ── ULTS CHART ──────────────────────────────────────────────────
 function buildUltsChart(){
   const sorted=[...DATA].sort((a,b)=>b.ultsLost-a.ultsLost);
   new Chart(document.getElementById('c-ults').getContext('2d'),{
     type:'bar',
-    data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(d=>parseFloat(d.ultsLost.toFixed(3))),backgroundColor:sorted.map(d=>ARCH[d.arch].color+'cc'),borderRadius:3,borderSkipped:false}]},
+    data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(d=>+d.ultsLost.toFixed(3)),backgroundColor:sorted.map(d=>ARCH[d.arch].color+'cc'),borderRadius:2,borderSkipped:false}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{enabled:false}},
-      scales:{
-        x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10},callback:v=>v.toFixed(2)},title:{display:true,text:`Estimated ults lost per ${MATCH_MIN}-min match`,color:'#5f5e5a',font:{size:11}}},
-        y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}
-      },
+      scales:{x:{grid:{color:GC},ticks:{color:TC,font:{size:10},callback:v=>v.toFixed(2)},title:{display:true,text:`ESTIMATED ULTS LOST PER ${MATCH_MIN}-MIN MATCH`,color:TC,font:{size:10,family:'Barlow Condensed',weight:'700'}}},y:{grid:{display:false},ticks:{color:TC,font:{size:10}}}},
       onHover:(evt,els,chart)=>{
         const tip=document.getElementById('tip-ults');
         if(!els.length){tip.style.opacity=0;return;}
         const d=sorted[els[0].index];
         const u65=(MATCH_MIN*60/d.t65).toFixed(2),u70=(MATCH_MIN*60/d.t70).toFixed(2);
-        tip.innerHTML=makeTip(d)+`<br>6.5 ults/match: ${u65} · 7.0: ${u70}`;
-        const wr=chart.canvas.parentElement.getBoundingClientRect();
-        tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
-        tip.style.top=(evt.native.clientY-wr.top-10)+'px';
-        tip.style.opacity=1;
+        tip.innerHTML=makeTip(d)+`<br>Ults/match 6.5: ${u65} · 7.0: ${u70}`;
+        pos(tip,evt,chart);tip.style.opacity=1;
       }
     }
   });
   const leg=document.getElementById('leg-ults');
-  Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
+  Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-sq" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
 }
 
-let made={};
-function buildArchSplit(cid,valFn,sortFn,xLabel,colorFn){
-  const container=document.getElementById(cid);
+// ── ARCH SPLIT CHARTS ────────────────────────────────────────────
+function buildArchSplit(cid,valFn,sortFn,xLbl,colorFn){
+  const wrap=document.getElementById(cid);
   ROLES.forEach(role=>{
     const rb=document.createElement('div');rb.className='role-block';
-    rb.innerHTML=`<div class="role-block-header"><span class="role-pill" style="color:${role.pill};background:${role.pillBg}">${role.label}</span></div>`;
+    const rh=document.createElement('div');rh.className='role-block-head';
+    const pill=document.createElement('span');pill.className='role-label-pill';pill.textContent=role.label;pill.style.background=role.pill;
+    rh.appendChild(pill);rb.appendChild(rh);
     role.archs.forEach(ak=>{
       const heroes=DATA.filter(h=>h.r===role.key&&h.arch===ak);if(!heroes.length)return;
       const sorted=[...heroes].sort(sortFn);
       const ab=document.createElement('div');ab.className='arch-block';
-      const hdr=document.createElement('div');hdr.className='arch-block-header';hdr.style.borderLeftColor=ARCH[ak].color;
-      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;
-      ab.appendChild(hdr);
+      const ah=document.createElement('div');ah.className='arch-block-head';ah.style.borderLeftColor=ARCH[ak].color;
+      ah.innerHTML=`<span style="color:${ARCH[ak].color}">${ak}</span><span>${ARCH[ak].label}</span>`;
+      ab.appendChild(ah);
       const ht=Math.max(sorted.length*28+40,50);
       const cw=document.createElement('div');cw.className='chart-wrap';cw.style.height=ht+'px';
       const cv=document.createElement('canvas');
       const tip=document.createElement('div');tip.className='tooltip';
       const tid=`tip-${cid}-${role.key}-${ak}`;tip.id=tid;
-      cw.appendChild(cv);cw.appendChild(tip);ab.appendChild(cw);rb.appendChild(ab);
+      cw.append(cv,tip);ab.appendChild(cw);rb.appendChild(ab);
       new Chart(cv.getContext('2d'),{
         type:'bar',
-        data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(valFn),backgroundColor:sorted.map(colorFn),borderRadius:3,borderSkipped:false}]},
+        data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(valFn),backgroundColor:sorted.map(colorFn),borderRadius:2,borderSkipped:false}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},tooltip:{enabled:false}},
-          scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:xLabel,color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
+          scales:{x:{grid:{color:GC},ticks:{color:TC,font:{size:10}},title:{display:true,text:xLbl,color:TC,font:{size:10,family:'Barlow Condensed',weight:'700'}}},y:{grid:{display:false},ticks:{color:TC,font:{size:10}}}},
           onHover:(evt,els,chart)=>{
             const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}
-            t.innerHTML=makeTip(sorted[els[0].index]);
-            const wr=chart.canvas.parentElement.getBoundingClientRect();
-            t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
-            t.style.top=(evt.native.clientY-wr.top-10)+'px';
-            t.style.opacity=1;
+            t.innerHTML=makeTip(sorted[els[0].index]);pos(t,evt,chart);t.style.opacity=1;
           }
         }
       });
     });
-    container.appendChild(rb);
+    wrap.appendChild(rb);
   });
 }
 
+// ── DELTA CHART ─────────────────────────────────────────────────
 function buildDelta(cid){
-  const container=document.getElementById(cid);
+  const wrap=document.getElementById(cid);
   ROLES.forEach(role=>{
     const rb=document.createElement('div');rb.className='role-block';
-    rb.innerHTML=`<div class="role-block-header"><span class="role-pill" style="color:${role.pill};background:${role.pillBg}">${role.label}</span></div>`;
+    const rh=document.createElement('div');rh.className='role-block-head';
+    const pill=document.createElement('span');pill.className='role-label-pill';pill.textContent=role.label;pill.style.background=role.pill;
+    rh.appendChild(pill);rb.appendChild(rh);
     role.archs.forEach(ak=>{
       const heroes=DATA.filter(h=>h.r===role.key&&h.arch===ak);if(!heroes.length)return;
       const sorted=[...heroes].sort((a,b)=>b.pct-a.pct);
       const ab=document.createElement('div');ab.className='arch-block';
-      const hdr=document.createElement('div');hdr.className='arch-block-header';hdr.style.borderLeftColor=ARCH[ak].color;
-      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;
-      ab.appendChild(hdr);
+      const ah=document.createElement('div');ah.className='arch-block-head';ah.style.borderLeftColor=ARCH[ak].color;
+      ah.innerHTML=`<span style="color:${ARCH[ak].color}">${ak}</span><span>${ARCH[ak].label}</span>`;
+      ab.appendChild(ah);
       const ht=Math.max(sorted.length*34+40,50);
       const cw=document.createElement('div');cw.className='chart-wrap';cw.style.height=ht+'px';
       const cv=document.createElement('canvas');
       const tip=document.createElement('div');tip.className='tooltip';
       const tid=`tip-d-${role.key}-${ak}`;tip.id=tid;
-      cw.appendChild(cv);cw.appendChild(tip);ab.appendChild(cw);rb.appendChild(ab);
+      cw.append(cv,tip);ab.appendChild(cw);rb.appendChild(ab);
       new Chart(cv.getContext('2d'),{
         type:'bar',
         data:{labels:sorted.map(d=>d.n),datasets:[
-          {label:'6.5',data:sorted.map(d=>parseFloat(d.t65.toFixed(1))),backgroundColor:'#1D9E75',borderRadius:3,borderSkipped:false},
-          {label:'7.0',data:sorted.map(d=>parseFloat(d.t70.toFixed(1))),backgroundColor:'#D85A30',borderRadius:3,borderSkipped:false}
+          {label:'6.5',data:sorted.map(d=>+d.t65.toFixed(1)),backgroundColor:'#1abc9ccc',borderRadius:2,borderSkipped:false},
+          {label:'7.0',data:sorted.map(d=>+d.t70.toFixed(1)),backgroundColor:'#c0392bcc',borderRadius:2,borderSkipped:false}
         ]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},tooltip:{enabled:false}},
-          scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'Seconds to ult',color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
+          scales:{x:{grid:{color:GC},ticks:{color:TC,font:{size:10}},title:{display:true,text:'SECONDS TO ULT',color:TC,font:{size:10,family:'Barlow Condensed',weight:'700'}}},y:{grid:{display:false},ticks:{color:TC,font:{size:10}}}},
           onHover:(evt,els,chart)=>{
             const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}
-            t.innerHTML=makeTip(sorted[els[0].index]);
-            const wr=chart.canvas.parentElement.getBoundingClientRect();
-            t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
-            t.style.top=(evt.native.clientY-wr.top-10)+'px';
-            t.style.opacity=1;
+            t.innerHTML=makeTip(sorted[els[0].index]);pos(t,evt,chart);t.style.opacity=1;
           }
         }
       });
     });
-    container.appendChild(rb);
+    wrap.appendChild(rb);
   });
 }
 
+// ── TABLE ────────────────────────────────────────────────────────
 let tblSort='pct',tblDir=1;
 function sortTable(col){if(tblSort===col)tblDir*=-1;else{tblSort=col;tblDir=1;}renderTable();}
 function renderTable(){
-  const sorted=[...DATA].sort((a,b)=>{let av=a[tblSort]??'',bv=b[tblSort]??'';return typeof av==='string'?av.localeCompare(bv)*tblDir:(av-bv)*tblDir;});
+  const sorted=[...DATA].sort((a,b)=>{const av=a[tblSort]??'',bv=b[tblSort]??'';return typeof av==='string'?av.localeCompare(bv)*tblDir:(av-bv)*tblDir;});
   const tbody=document.getElementById('tbl-body');tbody.innerHTML='';
   sorted.forEach(d=>{
-    const vf=HIGH_VAR.has(d.n)?'<span class="flag">⚠</span>':'';
-    const duals=d.dual?` <span style="font-size:9px;color:#73726c">${d.dual.join('/')}</span>`:'';
+    const vf=HIGH_VAR.has(d.n)?'<span style="font-size:9px;color:var(--gold);margin-left:3px">⚠</span>':'';
+    const duals=d.dual?` <span style="font-size:9px;color:var(--text3)">${d.dual.join('/')}</span>`:'';
+    const ac=ARCH[d.arch].color;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${d.n}${vf}</td><td>${ROLE_LABEL[d.r]}</td><td><span class="atag" style="background:${ARCH[d.arch].color}22;color:${ARCH[d.arch].color}">${d.arch}</span>${duals}</td><td>${d.dpm}</td><td>${d.hpm||'—'}</td><td>${d.ult}</td><td>${d.t65.toFixed(1)}</td><td>${d.t70.toFixed(1)}</td><td>+${d.abs.toFixed(1)}</td><td class="pct-cell" style="color:${pctGrad(d.pct)}">+${d.pct.toFixed(1)}%</td><td>${d.ultsLost.toFixed(3)}</td>`;
+    tr.innerHTML=`<td>${d.n}${vf}</td>
+<td style="color:${ROLE_COLOR[d.r]}">${ROLE_LABEL[d.r]}</td>
+<td><span style="font-family:'Barlow Condensed';font-size:9px;font-weight:700;padding:1px 6px;border:1px solid;clip-path:polygon(0 0,calc(100% - 3px) 0,100% 100%,3px 100%);background:${ac}22;color:${ac};border-color:${ac}55">${d.arch}</span>${duals}</td>
+<td>${d.dpm}</td>
+<td>${d.hpm||'—'}</td>
+<td>${d.ult}</td>
+<td>${d.t65.toFixed(1)}</td>
+<td>${d.t70.toFixed(1)}</td>
+<td style="color:var(--gold)">+${d.abs.toFixed(1)}</td>
+<td class="pct-cell" style="color:${pctGrad(d.pct)}">+${d.pct.toFixed(1)}%</td>
+<td>${d.ultsLost.toFixed(3)}</td>`;
     tbody.appendChild(tr);
   });
 }
 
+// ── UTILS ────────────────────────────────────────────────────────
+function pos(tip,evt,chart){
+  const wr=chart.canvas.parentElement.getBoundingClientRect();
+  tip.style.left=Math.min(evt.native.clientX-wr.left+14,wr.width-220)+'px';
+  tip.style.top=(evt.native.clientY-wr.top-10)+'px';
+}
+
+// ── TAB SWITCHING ────────────────────────────────────────────────
+const made={};
 function showTab(tab){
   ['overview','all','ults','slowdown','t65','t70','delta','table'].forEach(t=>{
     document.getElementById('view-'+t).style.display=t===tab?'block':'none';
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
   });
-  if(tab==='all'&&!made.all){made.all=true;setFilter('all');buildAllChart();}
+  if(tab==='all'&&!made.all){made.all=true;setFilter('all');}
   if(tab==='ults'&&!made.ults){made.ults=true;buildUltsChart();}
-  if(tab==='slowdown'&&!made.s){made.s=true;buildArchSplit('chart-s',d=>parseFloat(d.pct.toFixed(1)),(a,b)=>b.pct-a.pct,'% slower in 7.0 vs 6.5',d=>pctGrad(d.pct));}
-  if(tab==='t65'&&!made.t65){made.t65=true;buildArchSplit('chart-65',d=>parseFloat(d.t65.toFixed(1)),(a,b)=>b.t65-a.t65,'Seconds to ult (6.5)',d=>ARCH[d.arch].color+'cc');}
-  if(tab==='t70'&&!made.t70){made.t70=true;buildArchSplit('chart-70',d=>parseFloat(d.t70.toFixed(1)),(a,b)=>b.t70-a.t70,'Seconds to ult (7.0)',d=>ARCH[d.arch].color+'cc');}
+  if(tab==='slowdown'&&!made.s){made.s=true;buildArchSplit('chart-s',d=>+d.pct.toFixed(1),(a,b)=>b.pct-a.pct,'% SLOWER IN 7.0',d=>pctGrad(d.pct));}
+  if(tab==='t65'&&!made.t65){made.t65=true;buildArchSplit('chart-65',d=>+d.t65.toFixed(1),(a,b)=>b.t65-a.t65,'SECONDS TO ULT (6.5)',d=>ARCH[d.arch].color+'cc');}
+  if(tab==='t70'&&!made.t70){made.t70=true;buildArchSplit('chart-70',d=>+d.t70.toFixed(1),(a,b)=>b.t70-a.t70,'SECONDS TO ULT (7.0)',d=>ARCH[d.arch].color+'cc');}
   if(tab==='delta'&&!made.d){made.d=true;buildDelta('chart-d');}
   if(tab==='table'&&!made.tbl){made.tbl=true;renderTable();}
 }
 
+// ── INIT ─────────────────────────────────────────────────────────
 buildOverview();
 setFilter('all');
 </script>
