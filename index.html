@@ -54,7 +54,6 @@ table { width: 100%; border-collapse: collapse; font-size: 11px; }
 thead tr { border-bottom: 1px solid #d3d1c7; }
 th { text-align: left; padding: 5px 8px; font-weight: 500; color: #73726c; cursor: pointer; white-space: nowrap; user-select: none; background: #f8f8f6; }
 th:hover { color: #1a1a18; }
-th.sorted { color: #185fa5; }
 td { padding: 4px 8px; border-bottom: 0.5px solid #e8e6de; color: #1a1a18; white-space: nowrap; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #f1efe8; }
@@ -68,9 +67,8 @@ tr:hover td { background: #f1efe8; }
     Season 6.5 → 7.0 global changes &nbsp;|&nbsp;
     <strong>Duelists &amp; Vanguards:</strong> damage conversion 90%→70%, passive 12→11/s &nbsp;|&nbsp;
     <strong>Strategists:</strong> dmg+heal conversion 90%→75%, passive 12→8/s<br>
-    DPM &amp; HPM from rivalsmeta.com top-500 competitive (Season 6.5). Ult costs from confirmed patch notes.
+    DPM &amp; HPM from rivalsmeta.com top-500 competitive (Season 6.5). Ult costs from official Marvel Rivals ability data. Analysis by sevenfingeredweaver.
   </p>
-
   <div class="tab-row">
     <button class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
     <button class="tab" onclick="showTab('all')" id="tab-all">All heroes — % change</button>
@@ -150,8 +148,9 @@ tr:hover td { background: #f1efe8; }
 
   <div class="note">
     <strong>Formulas —</strong> D/V 6.5: dmg×0.90+12/s → 7.0: dmg×0.70+11/s &nbsp;|&nbsp; S 6.5: (dmg+heal)×0.90+12/s → 7.0: (dmg+heal)×0.75+8/s<br>
-    <strong>Top-500 caveat —</strong> DPM skews high vs average play; passive energy matters proportionally more at lower skill levels.<br>
-    <strong>⚠ High variance —</strong> Iron Fist and Mister Fantastic have highly variable DPM depending on playstyle — values reflect top-500 averages only.
+    <strong>Top-500 caveat —</strong> DPM/HPM skews high vs average play; passive energy matters proportionally more at lower skill levels. Relative rankings between heroes remain valid.<br>
+    <strong>⚠ High variance —</strong> Iron Fist and Mister Fantastic have highly variable DPM depending on playstyle — values reflect top-500 averages only.<br>
+    <strong>Ult costs —</strong> Sourced from official Marvel Rivals ability data. Global patch changes only — individual hero reworks are outside scope of this model.
   </div>
 </div>
 
@@ -160,54 +159,64 @@ tr:hover td { background: #f1efe8; }
 const ARCH={DV:{label:'Dive',color:'#7F77DD'},PK:{label:'Poke',color:'#1D9E75'},BR:{label:'Brawl',color:'#BA7517'},FL:{label:'Flank',color:'#D85A30'},CZ:{label:'Control/Zone',color:'#E24B4A'},DT:{label:'Dive Tank',color:'#5DCAA5'},AT:{label:'Anchor Tank',color:'#534AB7'},ML:{label:'Main Healer',color:'#888780'},OH:{label:'Off-Healer',color:'#3B8BD4'},BS:{label:'Brawl Support',color:'#EF9F27'}};
 const ROLE_COLOR={D:'#1D9E75',V:'#7F77DD',S:'#BA7517'};
 const ROLE_LABEL={D:'Duelist',V:'Vanguard',S:'Strategist'};
-const ROLES=[{key:'D',label:'Duelist',pill:'#1D9E75',pillBg:'rgba(29,158,117,0.12)',archs:['DV','PK','BR','FL','CZ']},{key:'V',label:'Vanguard',pill:'#7F77DD',pillBg:'rgba(127,119,221,0.12)',archs:['DT','BR','AT','CZ']},{key:'S',label:'Strategist',pill:'#BA7517',pillBg:'rgba(186,117,23,0.12)',archs:['ML','OH','BS']}];
+const ROLES=[
+  {key:'D',label:'Duelist',pill:'#1D9E75',pillBg:'rgba(29,158,117,0.12)',archs:['DV','PK','BR','FL','CZ']},
+  {key:'V',label:'Vanguard',pill:'#7F77DD',pillBg:'rgba(127,119,221,0.12)',archs:['DT','BR','AT','CZ']},
+  {key:'S',label:'Strategist',pill:'#BA7517',pillBg:'rgba(186,117,23,0.12)',archs:['ML','OH','BS']}
+];
 const MATCH_MIN=15;
 const HIGH_VAR=new Set(['Iron Fist','Mister Fantastic']);
+
+// Ult costs corrected from official Marvel Rivals ability data
 const RAW=[
-  {n:'Spider-Man',r:'D',arch:'DV',dpm:940,hpm:0,ult:2800},
-  {n:'Psylocke',r:'D',arch:'DV',dpm:1640,hpm:0,ult:3400,dual:['PK']},
-  {n:'Magik',r:'D',arch:'DV',dpm:1655,hpm:0,ult:3400,dual:['FL']},
-  {n:'Daredevil',r:'D',arch:'DV',dpm:1533,hpm:0,ult:3400},
-  {n:'Black Panther',r:'D',arch:'DV',dpm:1082,hpm:0,ult:3300},
-  {n:'Black Widow',r:'D',arch:'PK',dpm:1262,hpm:0,ult:3100},
-  {n:'Hawkeye',r:'D',arch:'PK',dpm:1507,hpm:0,ult:3400},
-  {n:'Hela',r:'D',arch:'PK',dpm:1711,hpm:0,ult:3400},
-  {n:'Iron Man',r:'D',arch:'PK',dpm:1712,hpm:0,ult:2800},
-  {n:'Storm',r:'D',arch:'PK',dpm:1894,hpm:0,ult:3000},
-  {n:'Human Torch',r:'D',arch:'PK',dpm:1600,hpm:0,ult:3400,dual:['CZ']},
-  {n:'Squirrel Girl',r:'D',arch:'PK',dpm:1350,hpm:0,ult:3100},
-  {n:'Moon Knight',r:'D',arch:'PK',dpm:2391,hpm:0,ult:3700},
-  {n:'The Punisher',r:'D',arch:'PK',dpm:2008,hpm:0,ult:3400},
-  {n:'Namor',r:'D',arch:'PK',dpm:1600,hpm:0,ult:3400,dual:['CZ']},
-  {n:'Iron Fist',r:'D',arch:'BR',dpm:900,hpm:0,ult:2800,dual:['DV']},
-  {n:'Blade',r:'D',arch:'BR',dpm:1493,hpm:0,ult:3400},
-  {n:'Star-Lord',r:'D',arch:'BR',dpm:1450,hpm:0,ult:3100,dual:['FL']},
-  {n:'Wolverine',r:'D',arch:'FL',dpm:1269,hpm:0,ult:2800,dual:['BR']},
-  {n:'Scarlet Witch',r:'D',arch:'CZ',dpm:1560,hpm:0,ult:2800},
-  {n:'Winter Soldier',r:'D',arch:'CZ',dpm:1834,hpm:0,ult:3400,dual:['PK']},
-  {n:'Mister Fantastic',r:'D',arch:'CZ',dpm:900,hpm:0,ult:3400},
-  {n:'Venom',r:'V',arch:'DT',dpm:1336,hpm:0,ult:2500},
-  {n:'Rogue',r:'V',arch:'DT',dpm:1343,hpm:179,ult:3000,dual:['BR']},
-  {n:'Angela',r:'V',arch:'DT',dpm:940,hpm:0,ult:3000},
-  {n:'Captain America',r:'V',arch:'DT',dpm:1084,hpm:0,ult:2800,dual:['BR']},
-  {n:'Hulk',r:'V',arch:'DT',dpm:1169,hpm:0,ult:3400,dual:['BR']},
-  {n:'Thor',r:'V',arch:'BR',dpm:1493,hpm:0,ult:3200,dual:['DT']},
-  {n:'The Thing',r:'V',arch:'BR',dpm:1609,hpm:0,ult:3400},
-  {n:'Magneto',r:'V',arch:'AT',dpm:1500,hpm:0,ult:3400},
-  {n:'Doctor Strange',r:'V',arch:'AT',dpm:1495,hpm:0,ult:3400,dual:['CZ']},
-  {n:'Emma Frost',r:'V',arch:'AT',dpm:1475,hpm:0,ult:3400,dual:['BR']},
-  {n:'Groot',r:'V',arch:'CZ',dpm:1808,hpm:46,ult:3400,dual:['AT']},
-  {n:'Peni Parker',r:'V',arch:'CZ',dpm:1270,hpm:371,ult:3400},
-  {n:'Rocket Raccoon',r:'S',arch:'ML',dpm:157,hpm:2139,ult:3400,healer:true},
-  {n:'Luna Snow',r:'S',arch:'ML',dpm:699,hpm:2352,ult:3400,healer:true},
-  {n:'Invisible Woman',r:'S',arch:'ML',dpm:792,hpm:2530,ult:3400,healer:true,dual:['CZ']},
-  {n:'Jeff the Shark',r:'S',arch:'ML',dpm:892,hpm:2064,ult:3000,healer:true,dual:['CZ']},
-  {n:'Loki',r:'S',arch:'ML',dpm:798,hpm:2380,ult:3000,healer:true,dual:['CZ']},
-  {n:'Cloak & Dagger',r:'S',arch:'ML',dpm:639,hpm:2804,ult:3000,healer:true,dual:['BS']},
-  {n:'Mantis',r:'S',arch:'BS',dpm:858,hpm:1478,ult:3400,healer:true,dual:['OH']},
-  {n:'Adam Warlock',r:'S',arch:'OH',dpm:1017,hpm:1353,ult:3400,healer:true,dual:['BS']},
-  {n:'Ultron',r:'S',arch:'OH',dpm:1142,hpm:1651,ult:3400,healer:true},
+  // DUELISTS
+  {n:'Spider-Man',      r:'D',arch:'DV',dpm:940,  hpm:0,   ult:2800},
+  {n:'Psylocke',        r:'D',arch:'DV',dpm:1640, hpm:0,   ult:3400,dual:['PK']},
+  {n:'Magik',           r:'D',arch:'DV',dpm:1655, hpm:0,   ult:3400,dual:['FL']},
+  {n:'Daredevil',       r:'D',arch:'DV',dpm:1533, hpm:0,   ult:3400},
+  {n:'Black Panther',   r:'D',arch:'DV',dpm:1082, hpm:0,   ult:3300},
+  {n:'Black Widow',     r:'D',arch:'PK',dpm:1262, hpm:0,   ult:2800},
+  {n:'Hawkeye',         r:'D',arch:'PK',dpm:1507, hpm:0,   ult:3100},
+  {n:'Hela',            r:'D',arch:'PK',dpm:1711, hpm:0,   ult:4000},
+  {n:'Iron Man',        r:'D',arch:'PK',dpm:1712, hpm:0,   ult:3400},
+  {n:'Storm',           r:'D',arch:'PK',dpm:1894, hpm:0,   ult:3400},
+  {n:'Human Torch',     r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3400,dual:['CZ']},
+  {n:'Squirrel Girl',   r:'D',arch:'PK',dpm:1350, hpm:0,   ult:2800},
+  {n:'Moon Knight',     r:'D',arch:'PK',dpm:2391, hpm:0,   ult:2800},
+  {n:'The Punisher',    r:'D',arch:'PK',dpm:2008, hpm:0,   ult:3400},
+  {n:'Namor',           r:'D',arch:'PK',dpm:1600, hpm:0,   ult:3100,dual:['CZ']},
+  {n:'Iron Fist',       r:'D',arch:'BR',dpm:900,  hpm:0,   ult:3400,dual:['DV']},
+  {n:'Blade',           r:'D',arch:'BR',dpm:1493, hpm:0,   ult:2800},
+  {n:'Star-Lord',       r:'D',arch:'BR',dpm:1450, hpm:0,   ult:3100,dual:['FL']},
+  {n:'Wolverine',       r:'D',arch:'FL',dpm:1269, hpm:0,   ult:2800,dual:['BR']},
+  {n:'Scarlet Witch',   r:'D',arch:'CZ',dpm:1560, hpm:0,   ult:3400},
+  {n:'Winter Soldier',  r:'D',arch:'CZ',dpm:1834, hpm:0,   ult:3100,dual:['PK']},
+  {n:'Mister Fantastic',r:'D',arch:'CZ',dpm:900,  hpm:0,   ult:3400},
+  // VANGUARDS
+  {n:'Venom',           r:'V',arch:'DT',dpm:1336, hpm:0,   ult:2500},
+  {n:'Rogue',           r:'V',arch:'DT',dpm:1343, hpm:179, ult:3400,dual:['BR']},
+  {n:'Angela',          r:'V',arch:'DT',dpm:940,  hpm:0,   ult:3100},
+  {n:'Captain America', r:'V',arch:'DT',dpm:1084, hpm:0,   ult:3100,dual:['BR']},
+  {n:'Hulk',            r:'V',arch:'DT',dpm:1169, hpm:0,   ult:3400,dual:['BR']},
+  {n:'Thor',            r:'V',arch:'BR',dpm:1493, hpm:0,   ult:3100,dual:['DT']},
+  {n:'The Thing',       r:'V',arch:'BR',dpm:1609, hpm:0,   ult:2800},
+  {n:'Magneto',         r:'V',arch:'AT',dpm:1500, hpm:0,   ult:3400},
+  {n:'Doctor Strange',  r:'V',arch:'AT',dpm:1495, hpm:0,   ult:3100,dual:['CZ']},
+  {n:'Emma Frost',      r:'V',arch:'AT',dpm:1475, hpm:0,   ult:3400,dual:['BR']},
+  {n:'Groot',           r:'V',arch:'CZ',dpm:1808, hpm:46,  ult:2800,dual:['AT']},
+  {n:'Peni Parker',     r:'V',arch:'CZ',dpm:1270, hpm:371, ult:3400},
+  // STRATEGISTS — corrected costs from official data
+  {n:'Rocket Raccoon',  r:'S',arch:'ML',dpm:157,  hpm:2139,ult:4300,healer:true},
+  {n:'Luna Snow',       r:'S',arch:'ML',dpm:699,  hpm:2352,ult:5000,healer:true},
+  {n:'Invisible Woman', r:'S',arch:'ML',dpm:792,  hpm:2530,ult:4500,healer:true,dual:['CZ']},
+  {n:'Jeff the Shark',  r:'S',arch:'ML',dpm:892,  hpm:2064,ult:4500,healer:true,dual:['CZ']},
+  {n:'Loki',            r:'S',arch:'ML',dpm:798,  hpm:2380,ult:4300,healer:true,dual:['CZ']},
+  {n:'Cloak & Dagger',  r:'S',arch:'ML',dpm:639,  hpm:2804,ult:4500,healer:true,dual:['BS']},
+  {n:'Mantis',          r:'S',arch:'BS',dpm:858,  hpm:1478,ult:4300,healer:true,dual:['OH']},
+  {n:'Adam Warlock',    r:'S',arch:'OH',dpm:1017, hpm:1353,ult:4500,healer:true,dual:['BS']},
+  {n:'Ultron',          r:'S',arch:'OH',dpm:1142, hpm:1651,ult:4000,healer:true},
 ];
+
 const DATA=RAW.map(h=>{
   const isS=h.healer||h.r==='S';
   const src=(h.dpm+(h.hpm||0))/60,dmg=h.dpm/60;
@@ -272,25 +281,42 @@ function buildAllChart(){
   allChart=new Chart(document.getElementById('c-all').getContext('2d'),{
     type:'bar',
     data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(d=>parseFloat(d.pct.toFixed(1))),backgroundColor:allColors(sorted),borderRadius:3,borderSkipped:false}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
-      scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'% slower to ult in 7.0 vs 6.5',color:'#5f5e5a',font:{size:11}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
-      onHover:(evt,els,chart)=>{const tip=document.getElementById('tip-all');if(!els.length){tip.style.opacity=0;return;}tip.innerHTML=makeTip(sorted[els[0].index]);const wr=chart.canvas.parentElement.getBoundingClientRect();tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';tip.style.top=(evt.native.clientY-wr.top-10)+'px';tip.style.opacity=1;}}
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'% slower to ult in 7.0 vs 6.5',color:'#5f5e5a',font:{size:11}}},
+        y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}
+      },
+      onHover:(evt,els,chart)=>{
+        const tip=document.getElementById('tip-all');
+        if(!els.length){tip.style.opacity=0;return;}
+        tip.innerHTML=makeTip(sorted[els[0].index]);
+        const wr=chart.canvas.parentElement.getBoundingClientRect();
+        tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
+        tip.style.top=(evt.native.clientY-wr.top-10)+'px';
+        tip.style.opacity=1;
+      }
+    }
   });
-  // draw avg line manually
   const leg=document.getElementById('leg-all');leg.innerHTML='';
   if(allColorMode==='arch')Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
   else if(allColorMode==='role')Object.entries(ROLE_LABEL).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${ROLE_COLOR[k]}"></span>${v}</span>`;});
   else leg.innerHTML='<span class="leg"><span class="leg-dot" style="background:#1D9E75"></span>least impacted</span><span class="leg"><span class="leg-dot" style="background:#E24B4A"></span>most impacted</span>';
-  const rc=allFilter==='all'?'#888780':ROLE_COLOR[allFilter];
   const rl=allFilter==='all'?'Overall':ROLE_LABEL[allFilter];
   leg.innerHTML+=`<span class="leg" style="margin-left:8px">— ${rl} avg: ${avg.toFixed(1)}%</span>`;
 }
+function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}
 function setFilter(f){
   allFilter=f;
-  ['all','D','V','S'].forEach(x=>{const b=document.getElementById('f-'+x);if(!b)return;const isOn=x===f;b.style.borderColor=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#c8c6be';b.style.color=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#73726c';b.style.background=isOn?(x==='all'?'#e6f1fb':'rgba('+hexToRgb(x==='all'?'#185fa5':ROLE_COLOR[x])+',0.08)'):'transparent';});
+  ['all','D','V','S'].forEach(x=>{
+    const b=document.getElementById('f-'+x);if(!b)return;
+    const isOn=x===f;
+    b.style.borderColor=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#c8c6be';
+    b.style.color=isOn?(x==='all'?'#185fa5':ROLE_COLOR[x]):'#73726c';
+    b.style.background=isOn?(x==='all'?'#e6f1fb':'rgba('+hexToRgb(x==='all'?'#185fa5':ROLE_COLOR[x])+',0.08)'):'transparent';
+  });
   if(made.all)buildAllChart();
 }
-function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}
 function setColorMode(m){allColorMode=m;['arch','role','grad'].forEach(x=>document.getElementById('cm-'+x).classList.toggle('on',x===m));if(made.all)buildAllChart();}
 
 function buildUltsChart(){
@@ -298,11 +324,27 @@ function buildUltsChart(){
   new Chart(document.getElementById('c-ults').getContext('2d'),{
     type:'bar',
     data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(d=>parseFloat(d.ultsLost.toFixed(3))),backgroundColor:sorted.map(d=>ARCH[d.arch].color+'cc'),borderRadius:3,borderSkipped:false}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
-      scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10},callback:v=>v.toFixed(2)},title:{display:true,text:`Estimated ults lost per ${MATCH_MIN}-min match`,color:'#5f5e5a',font:{size:11}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
-      onHover:(evt,els,chart)=>{const tip=document.getElementById('tip-ults');if(!els.length){tip.style.opacity=0;return;}const d=sorted[els[0].index];const u65=(MATCH_MIN*60/d.t65).toFixed(2),u70=(MATCH_MIN*60/d.t70).toFixed(2);tip.innerHTML=makeTip(d)+`<br>6.5 ults/match: ${u65} · 7.0: ${u70}`;const wr=chart.canvas.parentElement.getBoundingClientRect();tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';tip.style.top=(evt.native.clientY-wr.top-10)+'px';tip.style.opacity=1;}}
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10},callback:v=>v.toFixed(2)},title:{display:true,text:`Estimated ults lost per ${MATCH_MIN}-min match`,color:'#5f5e5a',font:{size:11}}},
+        y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}
+      },
+      onHover:(evt,els,chart)=>{
+        const tip=document.getElementById('tip-ults');
+        if(!els.length){tip.style.opacity=0;return;}
+        const d=sorted[els[0].index];
+        const u65=(MATCH_MIN*60/d.t65).toFixed(2),u70=(MATCH_MIN*60/d.t70).toFixed(2);
+        tip.innerHTML=makeTip(d)+`<br>6.5 ults/match: ${u65} · 7.0: ${u70}`;
+        const wr=chart.canvas.parentElement.getBoundingClientRect();
+        tip.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
+        tip.style.top=(evt.native.clientY-wr.top-10)+'px';
+        tip.style.opacity=1;
+      }
+    }
   });
-  const leg=document.getElementById('leg-ults');Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
+  const leg=document.getElementById('leg-ults');
+  Object.entries(ARCH).forEach(([k,v])=>{leg.innerHTML+=`<span class="leg"><span class="leg-dot" style="background:${v.color}"></span>${k} ${v.label}</span>`;});
 }
 
 let made={};
@@ -316,17 +358,35 @@ function buildArchSplit(cid,valFn,sortFn,xLabel,colorFn){
       const sorted=[...heroes].sort(sortFn);
       const ab=document.createElement('div');ab.className='arch-block';
       const hdr=document.createElement('div');hdr.className='arch-block-header';hdr.style.borderLeftColor=ARCH[ak].color;
-      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;ab.appendChild(hdr);
+      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;
+      ab.appendChild(hdr);
       const ht=Math.max(sorted.length*28+40,50);
       const cw=document.createElement('div');cw.className='chart-wrap';cw.style.height=ht+'px';
-      const cv=document.createElement('canvas');const tip=document.createElement('div');tip.className='tooltip';const tid=`tip-${cid}-${role.key}-${ak}`;tip.id=tid;
+      const cv=document.createElement('canvas');
+      const tip=document.createElement('div');tip.className='tooltip';
+      const tid=`tip-${cid}-${role.key}-${ak}`;tip.id=tid;
       cw.appendChild(cv);cw.appendChild(tip);ab.appendChild(cw);rb.appendChild(ab);
-      new Chart(cv.getContext('2d'),{type:'bar',data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(valFn),backgroundColor:sorted.map(colorFn),borderRadius:3,borderSkipped:false}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:xLabel,color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
-        onHover:(evt,els,chart)=>{const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}t.innerHTML=makeTip(sorted[els[0].index]);const wr=chart.canvas.parentElement.getBoundingClientRect();t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';t.style.top=(evt.native.clientY-wr.top-10)+'px';t.style.opacity=1;}}});
-    });container.appendChild(rb);
+      new Chart(cv.getContext('2d'),{
+        type:'bar',
+        data:{labels:sorted.map(d=>d.n+(HIGH_VAR.has(d.n)?' ⚠':'')),datasets:[{data:sorted.map(valFn),backgroundColor:sorted.map(colorFn),borderRadius:3,borderSkipped:false}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{enabled:false}},
+          scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:xLabel,color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
+          onHover:(evt,els,chart)=>{
+            const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}
+            t.innerHTML=makeTip(sorted[els[0].index]);
+            const wr=chart.canvas.parentElement.getBoundingClientRect();
+            t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
+            t.style.top=(evt.native.clientY-wr.top-10)+'px';
+            t.style.opacity=1;
+          }
+        }
+      });
+    });
+    container.appendChild(rb);
   });
 }
+
 function buildDelta(cid){
   const container=document.getElementById(cid);
   ROLES.forEach(role=>{
@@ -337,15 +397,35 @@ function buildDelta(cid){
       const sorted=[...heroes].sort((a,b)=>b.pct-a.pct);
       const ab=document.createElement('div');ab.className='arch-block';
       const hdr=document.createElement('div');hdr.className='arch-block-header';hdr.style.borderLeftColor=ARCH[ak].color;
-      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;ab.appendChild(hdr);
+      hdr.innerHTML=`<span style="color:${ARCH[ak].color};font-weight:600">${ak}</span><span>${ARCH[ak].label}</span>`;
+      ab.appendChild(hdr);
       const ht=Math.max(sorted.length*34+40,50);
       const cw=document.createElement('div');cw.className='chart-wrap';cw.style.height=ht+'px';
-      const cv=document.createElement('canvas');const tip=document.createElement('div');tip.className='tooltip';const tid=`tip-d-${role.key}-${ak}`;tip.id=tid;
+      const cv=document.createElement('canvas');
+      const tip=document.createElement('div');tip.className='tooltip';
+      const tid=`tip-d-${role.key}-${ak}`;tip.id=tid;
       cw.appendChild(cv);cw.appendChild(tip);ab.appendChild(cw);rb.appendChild(ab);
-      new Chart(cv.getContext('2d'),{type:'bar',data:{labels:sorted.map(d=>d.n),datasets:[{label:'6.5',data:sorted.map(d=>parseFloat(d.t65.toFixed(1))),backgroundColor:'#1D9E75',borderRadius:3,borderSkipped:false},{label:'7.0',data:sorted.map(d=>parseFloat(d.t70.toFixed(1))),backgroundColor:'#D85A30',borderRadius:3,borderSkipped:false}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'Seconds to ult',color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
-        onHover:(evt,els,chart)=>{const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}t.innerHTML=makeTip(sorted[els[0].index]);const wr=chart.canvas.parentElement.getBoundingClientRect();t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';t.style.top=(evt.native.clientY-wr.top-10)+'px';t.style.opacity=1;}}});
-    });container.appendChild(rb);
+      new Chart(cv.getContext('2d'),{
+        type:'bar',
+        data:{labels:sorted.map(d=>d.n),datasets:[
+          {label:'6.5',data:sorted.map(d=>parseFloat(d.t65.toFixed(1))),backgroundColor:'#1D9E75',borderRadius:3,borderSkipped:false},
+          {label:'7.0',data:sorted.map(d=>parseFloat(d.t70.toFixed(1))),backgroundColor:'#D85A30',borderRadius:3,borderSkipped:false}
+        ]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{enabled:false}},
+          scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#5f5e5a',font:{size:10}},title:{display:true,text:'Seconds to ult',color:'#5f5e5a',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#3d3d3a',font:{size:10}}}},
+          onHover:(evt,els,chart)=>{
+            const t=document.getElementById(tid);if(!els.length){t.style.opacity=0;return;}
+            t.innerHTML=makeTip(sorted[els[0].index]);
+            const wr=chart.canvas.parentElement.getBoundingClientRect();
+            t.style.left=Math.min(evt.native.clientX-wr.left+12,wr.width-215)+'px';
+            t.style.top=(evt.native.clientY-wr.top-10)+'px';
+            t.style.opacity=1;
+          }
+        }
+      });
+    });
+    container.appendChild(rb);
   });
 }
 
@@ -364,7 +444,10 @@ function renderTable(){
 }
 
 function showTab(tab){
-  ['overview','all','ults','slowdown','t65','t70','delta','table'].forEach(t=>{document.getElementById('view-'+t).style.display=t===tab?'block':'none';document.getElementById('tab-'+t).classList.toggle('active',t===tab);});
+  ['overview','all','ults','slowdown','t65','t70','delta','table'].forEach(t=>{
+    document.getElementById('view-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
   if(tab==='all'&&!made.all){made.all=true;setFilter('all');buildAllChart();}
   if(tab==='ults'&&!made.ults){made.ults=true;buildUltsChart();}
   if(tab==='slowdown'&&!made.s){made.s=true;buildArchSplit('chart-s',d=>parseFloat(d.pct.toFixed(1)),(a,b)=>b.pct-a.pct,'% slower in 7.0 vs 6.5',d=>pctGrad(d.pct));}
